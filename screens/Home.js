@@ -59,11 +59,9 @@ const Home = ({ navigation: { navigate } }) => {
 
   useEffect(() => {
     const feelings = realm.objects("Feeling");
-    setFeelings(feelings);
-    // .addListener를 사용하여 변동이 있을 때 state를 다시 설정하여 데이터를 갱신
-    feelings.addListener(() => {
-      const feelings = realm.objects("Feeling");
-      setFeelings(feelings);
+    feelings.addListener((feelings, changes) => {
+      // console.log(changes); // {"deletions": [], "insertions": [], "newModifications": [], "oldModifications": []}
+      setFeelings(feelings.sorted("_id", true));
     });
     return () => {
       feelings.removeAllListeners();
