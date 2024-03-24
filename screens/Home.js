@@ -1,9 +1,22 @@
 import React, { useEffect, useState } from "react";
+import {
+  FlatList,
+  LayoutAnimation,
+  Platform,
+  TouchableOpacity,
+} from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import colors from "../colors";
 import { useDB } from "../context";
-import { FlatList, TouchableOpacity } from "react-native";
+
+// android에서 Layout Animation을 사용하기 위해서는 아래 코딩이 필요함
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 const View = styled.View`
   flex: 1;
@@ -52,6 +65,7 @@ const Seperator = styled.View`
 `;
 
 const Home = ({ navigation: { navigate } }) => {
+  // !!! useContext !!!
   const realm = useDB();
   // 새로운 item이 추가되거나 item이 수정, 삭제되었을 때 이를 반영하지 못함 -> useEffect를 사용해 해결
   // const [feelings, setFeelings] = useState(realm.objects("Feeling"));
@@ -59,8 +73,14 @@ const Home = ({ navigation: { navigate } }) => {
 
   useEffect(() => {
     const feelings = realm.objects("Feeling");
+    // !!! Event Listener !!!
     feelings.addListener((feelings, changes) => {
       // console.log(changes); // {"deletions": [], "insertions": [], "newModifications": [], "oldModifications": []}
+      // !!! Layout Animation !!!
+      // State에 어떤 변화가 생겼든지 animation하고 싶어라고 말 하는 것
+      // State 변화를 주기 전에 아래 코드를 사용하여 애니메이션이 적용되게 함
+      // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+      LayoutAnimation.linear();
       setFeelings(feelings.sorted("_id", true));
     });
     return () => {
