@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Alert } from "react-native";
 import styled from "styled-components/native";
 import colors from "../colors";
+import { useDB } from "../context";
 
 const View = styled.View`
   background-color: ${colors.bgColor};
@@ -57,7 +58,9 @@ const EmotionText = styled.Text`
 
 const emotions = ["🤯", "🥲", "🤬", "🤗", "🥰", "😊", "🤩"];
 
-const Write = () => {
+const Write = ({ navigation: { goBack } }) => {
+  // DBContext를 사용하기 원하는 곳에서 다음을 호출
+  const realm = useDB();
   const [selectedEmotion, setEmotion] = useState(null);
   const [feelings, setFeelings] = useState("");
   const onChangeText = (text) => setFeelings(text);
@@ -66,6 +69,19 @@ const Write = () => {
     if (feelings === "" || selectedEmotion == null) {
       return Alert.alert("Please complete form.");
     }
+    realm.write(() => {
+      const feeling = realm.create("Feeling", {
+        _id: Date.now(),
+        emotion: selectedEmotion,
+        message: feelings,
+      });
+      console.log(feeling);
+    });
+    // goBack을 사용하지 않는다면 state를 수동으로 비워줘야 함
+    // setEmotion(null);
+    // setFeelings("");
+    // goBack을 하면 screen이 unmount되고 자동으로 state가 비워짐
+    goBack();
   };
   return (
     <View>
