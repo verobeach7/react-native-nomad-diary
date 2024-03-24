@@ -9,6 +9,15 @@ import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import colors from "../colors";
 import { useDB } from "../context";
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from "react-native-google-mobile-ads";
+
+const adUnitId = __DEV__
+  ? TestIds.ADAPTIVE_BANNER
+  : "ca-app-pub-xxxxxxxxxxxxx/yyyyyyyyyyyyyy";
 
 // android에서 Layout Animation을 사용하기 위해서는 아래 코딩이 필요함
 if (
@@ -20,6 +29,8 @@ if (
 
 const View = styled.View`
   flex: 1;
+  justify-content: center;
+  align-items: center;
   padding: 0px 50px;
   padding-top: 100px;
   background-color: ${colors.bgColor};
@@ -27,7 +38,9 @@ const View = styled.View`
 const Title = styled.Text`
   color: ${colors.textColor};
   font-size: 38px;
-  margin-bottom: 100px;
+  font-weight: 500;
+  width: 100%;
+  margin-bottom: 20px;
 `;
 const Btn = styled.TouchableOpacity`
   position: absolute;
@@ -99,7 +112,9 @@ const Home = ({ navigation: { navigate } }) => {
   return (
     <View>
       <Title>My journal</Title>
+      <BannerAd unitId={adUnitId} size={BannerAdSize.FULL_BANNER} />
       <FlatList
+        style={{ marginVertical: 50, width: "100%" }}
         data={feelings}
         keyExtractor={(feeling) => feeling._id + ""}
         contentContainerStyle={{ paddingVertical: 10 }}
