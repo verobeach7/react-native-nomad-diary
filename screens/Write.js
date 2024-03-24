@@ -75,7 +75,7 @@ const Write = ({ navigation: { goBack } }) => {
         emotion: selectedEmotion,
         message: feelings,
       });
-      console.log(feeling);
+      // console.log(feeling);
     });
     // goBack을 사용하지 않는다면 state를 수동으로 비워줘야 함
     // setEmotion(null);
